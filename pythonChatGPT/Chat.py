@@ -1,8 +1,9 @@
 import openai
+import os
 messages = [
     {"role": "system", "content": "You are a kind helpful assistant."},
 ]
-openai.api_key = 'sk-'
+openai.api_key = os.environ.get('OPENAIKEY')
 while True:
     message = input("User : ")
     if message:
