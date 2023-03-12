@@ -1,67 +1,18 @@
-import time
-
 import openai
-from os import environ
-
-
-
-class ChatGPTAPI(Base):
-    def __init__(self, key, language, api_base=None, prompt_template=None):
-        super().__init__(key, language)
-        self.key_len = len(key.split(","))
-        if api_base:
-            openai.api_base = api_base
-        self.prompt_template = (
-            prompt_template
-            or "Please help me to translate,`{text}` to {language}, please return only translated content not include the origin text"
+messages = [
+    {"role": "system", "content": "You are a kind helpful assistant."},
+]
+openai.api_key = 'sk-'
+while True:
+    message = input("User : ")
+    if message:
+        messages.append(
+            {"role": "user", "content": message},
         )
-
-    def rotate_key(self):
-        openai.api_key = next(self.keys)
-
-    def get_translation(self, text):
-        self.rotate_key()
-        completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": environ.get("OPENAI_API_SYS_MSG") or "",
-                },
-                {
-                    "role": "user",
-                    "content": self.prompt_template.format(
-                        text=text, language=self.language
-                    ),
-                },
-            ],
+        chat = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", messages=messages
         )
-        t_text = (
-            completion["choices"][0]
-            .get("message")
-            .get("content")
-            .encode("utf8")
-            .decode()
-        )
-        return t_text
-
-    def translate(self, text):
-        # todo: Determine whether to print according to the cli option
-        print(text)
-
-        try:
-            t_text = self.get_translation(text)
-        except Exception as e:
-            # todo: better sleep time? why sleep alawys about key_len
-            # 1. openai server error or own network interruption, sleep for a fixed time
-            # 2. an apikey has no money or reach limit, don’t sleep, just replace it with another apikey
-            # 3. all apikey reach limit, then use current sleep
-            sleep_time = int(60 / self.key_len)
-            print(e, f"will sleep {sleep_time} seconds")
-            time.sleep(sleep_time)
-
-            t_text = self.get_translation(text)
-
-        # todo: Determine whether to print according to the cli option
-        print(t_text.strip())
-        return 
+    
+    reply = chat.choices[0].message.content
+    print(f"ChatGPT: {reply}")
+    messages.append({"role": "assistant", "content": reply})
