@@ -1,0 +1,27 @@
+Q:if i want to add message in one text, which parameter i should set in the function open in python
+In Python, you can use the `mode` parameter of the `open()` function to set the file access mode. The file access mode specifies how the file will be used. To add a message to an existing text file, you should use the mode `'a'` (append mode) which will allow you to append text to the end of the file without overwriting any existing content. Here's an example code snippet:
+
+```
+with open('filename.txt', mode='a') as file:
+    file.write('This is a new message that will be added to the end of the file')
+```
+
+In this code, you would replace `'filename.txt'` with the name and path of your actual text file, and you can change the message to whatever you need to add.Q:say this is a test
+A:This is a test.Q:if i has already 'git add', but i want to rescind this operate, how can i do
+A:To undo git add, you can use the command 'git reset'. You can use the following steps:
+
+1. Open the terminal where you have the git repository.
+2. Type 'git reset' command followed by the path of the file or directory that you want to unstage. For example, if you want to unstage a file named 'file1.txt', you can type the following command:
+
+```
+git reset file1.txt
+```
+
+3. If you want to unstage all the files that you have staged, you can type the following command:
+
+```
+git reset .
+```
+
+This command will unstage all the files that you have staged.
+
