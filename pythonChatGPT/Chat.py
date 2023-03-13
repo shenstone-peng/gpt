@@ -5,8 +5,7 @@ import os
 openai.api_key = os.environ.get('OPENAIKEY')
 
 # Define a function to get a response from OpenAI given a message and a list of previous messages
-def get_response(message, messages):
-    messages.append({"role": "user", "content": message})
+def get_response(messages):
     chat = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
     reply = chat.choices[0].message.content
     messages.append({"role": "assistant", "content": reply})
@@ -17,12 +16,19 @@ messages = [{"role": "system", "content": "You are a kind helpful assistant."}]
 
 # Start the conversation loop
 while True:
-    message = input("User: ")
-    if message:
-        reply, messages = get_response(message, messages)
+    message_lines = []
+    while True:
+        message_line = input("User: ")
+        if not message_line:
+            break
+        message_lines.append(message_line)
+    
+    if message_lines:
+        message = "\n".join(message_lines)
+        reply, messages = get_response(messages + [{"role": "user", "content": message}])
         print(f"ChatGPT: {reply}")
         with open('data.txt', 'a') as file:
-            file.write("Q:" + message + "\n")
-            file.write("A:" + reply + "\n\n")
+            file.write("Q: " + message + "\n")
+            file.write("A: " + reply + "\n\n")
     else:
         break
